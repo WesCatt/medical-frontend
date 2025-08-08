@@ -1,8 +1,8 @@
-//@ts-nocheck
 import {setMessageApi, setTitle} from "../utils/tool.ts"
 import {SearchOrImport} from "../components/SearchOrImport.tsx";
 import {Header} from "../components/Header.tsx";
-import {MedicalList} from "../components/MedicalList.tsx";
+import { MedicalList} from "../components/MedicalList.tsx";
+import type {Data} from "../components/MedicalList.tsx"
 import {useEffect, useState} from "react";
 import {message} from "antd";
 import api from "../request";
@@ -10,8 +10,8 @@ import api from "../request";
 
 function App() {
     setTitle("home");
-    const [data, setData] = useState([]);
-    const [filterData, setFilterData] = useState([]);
+    const [data, setData] = useState<Data[]>([]);
+    const [filterData, setFilterData] = useState<Data[]>([]);
     const [messageApi, contextHolder] = message.useMessage();
     setMessageApi(messageApi);
 
@@ -34,7 +34,7 @@ function App() {
     }
     const handleSearch = (number?: string) => {
         if (number)
-            setFilterData(data.filter(([id]: [string]) => id.includes(number)));
+            setFilterData(data.filter(([id]:Data) => id.includes(number)));
         else setFilterData(data);
     }
 

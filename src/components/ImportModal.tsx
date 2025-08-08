@@ -1,4 +1,3 @@
-//@ts-nocheck
 import {Modal} from "antd";
 import type {ReactNode} from "react";
 import {FiUpload} from "react-icons/fi";
@@ -9,11 +8,17 @@ import {getApi} from "../utils/tool.ts";
 import {ConfirmPasswordModal} from "./ConfirmPasswordModal.tsx";
 import api from "../request";
 
+export interface ModalRefType {
+    handleClose: () => void
+}
+
 export interface ModalProps {
     open: boolean;
     onClose: () => void;
     children?: ReactNode;
-    onOk: (file?: File | string) => void;
+    onOk: (file: File) => void;
+    loading?: boolean;
+    ref?: ModalRefType
 }
 
 export const ImportModal = (props: ModalProps) => {
@@ -23,7 +28,7 @@ export const ImportModal = (props: ModalProps) => {
     const [openConfirm, setOpenConfirm] = useState(false);
     const [loading, setLoading] = useState(false);
     const fileRef = useRef<HTMLInputElement>(null);
-    const modalRef = useRef(null);
+    const modalRef = useRef<ModalRefType>(null);
 
     const handleChangeFile = (e: any) => {
         const newFile = e.target.files[0];
@@ -70,7 +75,7 @@ export const ImportModal = (props: ModalProps) => {
     //确认密码，密码正确上传文件，否则报错
     const handleOk = (password: string) => {
         if (!file) return;
-        let formData = new FormData();
+        const formData = new FormData();
         setLoading(true);
         formData.append('file', file);
         formData.append('password', password);

@@ -1,18 +1,18 @@
-//@ts-nocheck
 import {RiDeleteBin2Line} from "react-icons/ri";
 import {FaPlus} from "react-icons/fa";
 import * as XLSX from "xlsx";
 import {useRef, useState} from "react";
 import {ImportModal} from "./ImportModal.tsx";
+import type {ModalRefType} from "./ImportModal.tsx"
 import {ClearModal} from "./ClearModal.tsx";
 import api from "../request";
 import {getApi} from "../utils/tool.ts";
 
-export const Header = ({getData}) => {
+export const Header = ({getData}: { getData: (useCache?: boolean) => void }) => {
     const [openImport, setOpenImport] = useState(false);
     const [openClear, setOpenClear] = useState(false);
     const [loading, setLoading] = useState(false);
-    const modalRef = useRef();
+    const modalRef = useRef<ModalRefType | null>(null);
 
     const handleClear = (password: string) => {
         setLoading(true);
@@ -82,7 +82,10 @@ export const Header = ({getData}) => {
             </div>
             <ImportModal onOk={handleFile} open={openImport} onClose={() => setOpenImport(false)}/>
             <ClearModal loading={loading} ref={modalRef} open={openClear} onOk={handleClear}
-                        onClose={() => setOpenClear(false)}/>
+                        onClose={() => {
+                            setOpenClear(false)
+                            modalRef.current?.handleClose()
+                        }}/>
         </header>
     )
 }

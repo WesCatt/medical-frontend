@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
 import {ChatBox} from "./components/ChatBox.tsx";
@@ -8,9 +6,17 @@ import {Button, Empty} from "antd";
 import {setTitle} from "../../utils/tool.ts";
 import api from "../../request";
 
+type Data = {
+    session_order_id: string,
+    user_message: string,
+    agent_message: string,
+    doctor_message: string
+}
+
+
 const ChatPage = () => {
     setTitle('chat');
-    const {id} = useParams();
+    const {id} = useParams<{ id: string }>();
     const [data, setData] = useState([]);
     const [isAgent, setIsAgent] = useState(true);
     const navigate = useNavigate();
@@ -20,10 +26,12 @@ const ChatPage = () => {
     }
 
     const getData = () => {
+        if (!id) return;
         api.get(`/data/${id}`).then(res => {
             setData(res.data.data);
-        }).catch(res => {
+        }).catch(() => {
             const medical_data = JSON.parse(localStorage.getItem("medical_data") || "{}");
+            // eslint-disable-next-line no-prototype-builtins
             if (!medical_data?.hasOwnProperty(id)) {
                 setData([]);
                 return
@@ -34,13 +42,8 @@ const ChatPage = () => {
 
 
     useEffect(() => {
-        if (!id) {
-            navigate("/404");
-            return
-        }
-
+        if (!id) return;
         getData();
-
     }, [id]);
 
 
@@ -70,7 +73,7 @@ const ChatPage = () => {
             <div className="p-5">
                 <div ref={containerRef} className="overflow-auto ">
                     {
-                        data?.length ? data.map((item, i) => {
+                        data?.length ? data.map((item: Data, i) => {
                             return (
                                 <div key={i}>
                                     <ChatBox isAi={false} isAgent={isAgent} agent_message={item.agent_message}
