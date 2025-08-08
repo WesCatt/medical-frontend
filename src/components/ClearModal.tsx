@@ -1,17 +1,25 @@
-// @ts-nocheck
-
 import {Form, Input, Modal} from "antd";
-import type {ModalProps} from "./ImportModal.tsx";
+import type {ModalRefType} from "./ImportModal.tsx";
 import {useImperativeHandle, useState} from "react";
+import type {RefObject} from "react";
 
+interface ClearModalProps {
+    open: boolean;
+    onClose: () => void;
+    onOk: (password: string) => void;
+    loading: boolean;
+    ref: RefObject<ModalRefType | null>;
+    title?: string;
+}
 
-export const ClearModal = (props: ModalProps) => {
+export const ClearModal = (props: ClearModalProps) => {
     const {open, onClose, onOk, loading, ref, ...res} = props;
     const [password, setPassword] = useState('');
 
-    useImperativeHandle(ref,()=>{
+    //@ts-ignore
+    useImperativeHandle(ref, () => {
         return {
-            handleClose:()=>{
+            handleClose: () => {
                 setPassword('');
             }
         }
@@ -19,7 +27,7 @@ export const ClearModal = (props: ModalProps) => {
 
     return (
         <>
-            <Modal ref={ref} open={open} centered onCancel={onClose} okText="确认" cancelText="取消" okButtonProps={{
+            <Modal open={open} centered onCancel={onClose} okText="确认" cancelText="取消" okButtonProps={{
                 danger: true,
                 loading,
             }} cancelButtonProps={{

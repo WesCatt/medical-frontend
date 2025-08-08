@@ -1,13 +1,14 @@
-//@ts-nocheck
 import {Modal, Form, Input} from "antd";
-import { useImperativeHandle, useState} from "react";
+import {useImperativeHandle, useState} from "react";
 import type {Ref} from "react";
+import type {ModalRefType} from "./ImportModal.tsx";
+
 interface ConfirmPasswordModalProps {
     onOk: (password: string) => void;
     onClose: () => void;
     open: boolean;
     loading: boolean;
-    ref: Ref<any>;
+    ref: Ref<ModalRefType | null>;
 }
 
 export const ConfirmPasswordModal = (props: ConfirmPasswordModalProps) => {
@@ -27,7 +28,7 @@ export const ConfirmPasswordModal = (props: ConfirmPasswordModalProps) => {
     })
 
     return (
-        <Modal ref={ref} cancelButtonProps={{
+        <Modal cancelButtonProps={{
             loading,
         }} centered open={open} okButtonProps={{
             loading,

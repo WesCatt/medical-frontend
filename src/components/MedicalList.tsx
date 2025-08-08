@@ -1,16 +1,21 @@
-// @ts-nocheck
-
 import {Empty} from "antd";
 import {MedicalCard} from "./MedicalCard.tsx";
 import {useRef, useState} from "react";
 import {ClearModal} from "./ClearModal.tsx";
 import api from "../request";
 import {getApi} from "../utils/tool.ts";
+import type {ModalRefType} from "./ImportModal.tsx";
 
-export const MedicalList = ({data, onDelete}) => {
-    const [openDelete, setOpenDelete] = useState(null);
+export type Data = [string , {session_order_id:string}[]];
+interface MedicalListProps {
+    data: Data[];
+    onDelete: (id: string) => void;
+}
+
+export const MedicalList = ({data, onDelete}: MedicalListProps) => {
+    const [openDelete, setOpenDelete] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-    const modalRef = useRef();
+    const modalRef = useRef<ModalRefType|null>(null);
     const handleDelete = (password: string) => {
         if (!openDelete) return;
 
@@ -42,15 +47,18 @@ export const MedicalList = ({data, onDelete}) => {
                     <div
                         className="container !my-5 py-5 px-2 gap-5 m-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
                         {
-                            data.map(([id]) => {
+                            data.map(([id]: Data) => {
                                 return <MedicalCard key={id} id={id} onDelete={() => setOpenDelete(id)}/>
                             })
                         }
                     </div>
             }
-            <ClearModal loading={loading} ref={modalRef} title={"确定要删除当前问诊记录吗?"} open={openDelete}
+            <ClearModal loading={loading} ref={modalRef} title={"确定要删除当前问诊记录吗?"} open={!!openDelete}
                         onOk={handleDelete}
-                        onClose={() => setOpenDelete(null)}/>
+                        onClose={() => {
+                            setOpenDelete(null)
+                            modalRef.current?.handleClose()
+                        }}/>
         </>
     )
 }
